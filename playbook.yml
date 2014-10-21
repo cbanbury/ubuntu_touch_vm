@@ -3,35 +3,51 @@
   vars: 
     repo_base: "https://code-review.phablet.ubuntu.com/p/aosp/platform/manifest.git"
     phablet_version: "phablet-4.4.2_r1"
-    concurrent_connections: 8
     vagrant_user_home: "/home/vagrant"
   tasks:
-  - name: ensure box is up to date
-    apt: update_cache=yes
-         upgrade=yes
-    sudo: yes
+  # - name: ensure box is up to date
+  #   apt: update_cache=yes
+  #        upgrade=yes
+  #   sudo: yes
 
   - name: install build dependencies
     apt: name={{ item }}
     sudo: yes
-    with_items:
-      - bison 
-      - g++-multilib 
+    with_items: 
       - git 
+      - gnupg 
+      - flex 
+      - bison 
       - gperf 
-      - libxml2-utils
+      - build-essential
+      - zip 
+      - bzr 
+      - curl 
+      - libc6-dev 
+      - lib32ncurses5-dev 
+      - x11proto-core-dev
+      - lib32readline6-dev
+      - libgl1-mesa-dev 
+      - g++-multilib 
+      - mingw32 
+      - tofrodos
+      - python-markdown 
+      - libxml2-utils 
+      - xsltproc  
+      - schedtool
 
   - name: install phablet-tools
     apt: name=phablet-tools
     sudo: yes
 
+  - name: check for initialised repo 
+    shell: ls -a | grep .repo
+    register: repo_exists
+
   - name: initialise repo
     shell: repo init -u {{ repo_base }} -b {{ phablet_version }}
            chdir={{ vagrant_user_home }}
-
-  - name: sync repo
-    shell: repo sync -j {{ concurrent_connections }}
-           chdir={{ vagrant_user_home }}
+    when: repo_exists.stdout is not defined
   #handlers:
   #  - name: restart apache
   #    service: name=httpd state=restarted

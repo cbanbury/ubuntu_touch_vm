@@ -15,10 +15,10 @@ Ubuntu 14.04 X64 VM install with:
 - Dependencies for installing ubuntu 
 - `phablet-tools`
 - Initialised phablet repo (currently 4.4.2)
-- `repo sync` into vagrant user home directory
 
 # Vagrant up? 
 1. Clone the repo 
 2. Make sure you have Vagrant and Ansible installed 
 3. From the cloned repo, run `vagrant up`
 4. To get onto the box: `vagrant ssh`
+5. `repo sync` from the home directory to get going
