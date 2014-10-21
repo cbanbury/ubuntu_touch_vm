@@ -1,0 +1,37 @@
+---
+- hosts: all
+  vars: 
+    repo_base: "https://code-review.phablet.ubuntu.com/p/aosp/platform/manifest.git"
+    phablet_version: "phablet-4.4.2_r1"
+    concurrent_connections: 8
+    vagrant_user_home: "/home/vagrant"
+  tasks:
+  - name: ensure box is up to date
+    apt: update_cache=yes
+         upgrade=yes
+    sudo: yes
+
+  - name: install build dependencies
+    apt: name={{ item }}
+    sudo: yes
+    with_items:
+      - bison 
+      - g++-multilib 
+      - git 
+      - gperf 
+      - libxml2-utils
+
+  - name: install phablet-tools
+    apt: name=phablet-tools
+    sudo: yes
+
+  - name: initialise repo
+    shell: repo init -u {{ repo_base }} -b {{ phablet_version }}
+           chdir={{ vagrant_user_home }}
+
+  - name: sync repo
+    shell: repo sync -j {{ concurrent_connections }}
+           chdir={{ vagrant_user_home }}
+  #handlers:
+  #  - name: restart apache
+  #    service: name=httpd state=restarted
