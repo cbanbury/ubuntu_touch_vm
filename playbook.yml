@@ -1,53 +1,57 @@
 ---
 - hosts: all
-  vars: 
+  vars:
     repo_base: "https://code-review.phablet.ubuntu.com/p/aosp/platform/manifest.git"
     phablet_version: "phablet-4.4.2_r1"
     vagrant_user_home: "/home/vagrant"
   tasks:
-  # - name: ensure box is up to date
-  #   apt: update_cache=yes
-  #        upgrade=yes
-  #   sudo: yes
+   - name: ensure support for i386 architecture is added
+     shell: dpkg --add-architecture i386
+     sudo: yes
 
-  - name: install build dependencies
-    apt: name={{ item }}
-    sudo: yes
-    with_items: 
-      - git 
-      - gnupg 
-      - flex 
-      - bison 
-      - gperf 
-      - build-essential
-      - zip 
-      - bzr 
-      - curl 
-      - libc6-dev 
-      - lib32ncurses5-dev 
-      - x11proto-core-dev
-      - lib32readline6-dev
-      - libgl1-mesa-dev 
-      - g++-multilib 
-      - mingw32 
-      - tofrodos
-      - python-markdown 
-      - libxml2-utils 
-      - xsltproc  
-      - schedtool
+   - name: ensure box is up to date
+     apt: update_cache=yes
+          upgrade=yes
+     sudo: yes
 
-  - name: install phablet-tools
-    apt: name=phablet-tools
-    sudo: yes
+   - name: install build dependencies
+     apt: name={{ item }}
+     sudo: yes
+     with_items:
+       - git
+       - gnupg
+       - flex
+       - bison
+       - gperf
+       - "build-essential"
+       - zip
+       - bzr
+       - curl
+       - libc6-dev
+       - libncurses5-dev:i386
+       - x11proto-core-dev
+       - libx11-dev:i386
+       - libreadline6-dev:i386
+       - libgl1-mesa-glx:i386
+       - libgl1-mesa-dev
+       - g++-multilib
+       - mingw32
+       - tofrodos
+       - python-markdown
+       - libxml2-utils
+       - xsltproc
+       - zlib1g-dev:i386
+       - schedtool
 
-  - name: check for initialised repo 
-    shell: ls -a | grep .repo
-    register: repo_exists
+   - name: install phablet-tools
+     apt: name=phablet-tools
+     sudo: yes
 
-  - name: initialise repo
-    shell: repo init -u {{ repo_base }} -b {{ phablet_version }}
-           chdir={{ vagrant_user_home }}
-    when: repo_exists.stdout is not defined
-  #handlers:
-  #  - name: restart apache
-  #    service: name=httpd state=restarted
+   - name: check for initialised repo
+     stat: path="{{ vagrant_user_home }}/.repo"
+     register: repo_exists
+
+   - name: initialise repo
+     shell: repo init -u {{ repo_base }} -b {{ phablet_version }}
+            chdir={{ vagrant_user_home }}
+     when: repo_exists.stat.isdir is not defined
