@@ -10,12 +10,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_check_update = true
 
   config.ssh.forward_agent = true
-  
+
   # Really should not need this
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
   config.vm.provider "virtualbox" do |vb|
-     vb.customize ["modifyvm", :id, "--memory", "1024"]
+     vb.memory = 2048
+     vb.cpus = 2
   end
 
   config.vm.provision "ansible" do |ansible|

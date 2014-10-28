@@ -11,7 +11,7 @@ This is much the same as building android.
 # What you get
 Ubuntu 14.04 X64 VM install with:
 
-- 1 GB RAM assigned
+- 2 GB RAM / 2 CPUs assigned (change depending on your machine specs)
 - Dependencies for building ubuntu-touch
 - `phablet-tools`
 - Initialised phablet repo (currently 4.4.2)

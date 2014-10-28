@@ -23,7 +23,7 @@
        - flex
        - bison
        - gperf
-       - "build-essential"
+       - build-essential
        - zip
        - bzr
        - curl
